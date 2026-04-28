@@ -7,7 +7,8 @@ from tqdm import tqdm
 from pathlib import Path
 
 print(os.getcwd())
-root_dir = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\peam_test"
+# root_dir = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\peam_test"
+root_dir = "/mnt/ExpDrive/SparkLabLongRun/Data/Biodesign_Data"
 # left_acc_path = "C:\\\\Users\\\\noppa\\OneDrive\\\\เดสก์ท็อป\\\\SparkLab\\\\Code\\\\SPARK-Lab-IMU\\\\data\\\\pkl_peam_test\\\\acceleration\\\\LeftFoot"
 
 # left_angle_path = "C:\\\\Users\\\\noppa\\OneDrive\\\\เดสก์ท็อป\\\\SparkLab\\\\Code\\\\SPARK-Lab-IMU\\\\data\\\\pkl_peam_test\\\\joint_angle\\\\LeftFoot"
@@ -16,10 +17,16 @@ root_dir = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\peam_test"
 # left_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\LeftFoot\\Foot_to_Pelvis"
 # right_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\RightFoot\\Foot_to_Pelvis"
 
-left_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\LeftFoot\\Foot_to_Pelvis"
-right_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\RightFoot\\Foot_to_Pelvis"
-left_velocity_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\velocity\\LeftFoot\\Foot_to_Pelvis"
-right_velocity_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\velocity\\RightFoot\\Foot_to_Pelvis"
+# left_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\LeftFoot\\Foot_to_Pelvis"
+# right_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\RightFoot\\Foot_to_Pelvis"
+# left_velocity_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\velocity\\LeftFoot\\Foot_to_Pelvis"
+# right_velocity_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\velocity\\RightFoot\\Foot_to_Pelvis"
+
+left_position_foot_to_pelvis_path = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/position/LeftFoot/Foot_to_Pelvis"
+right_position_foot_to_pelvis_path = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/position/RightFoot/Foot_to_Pelvis"
+left_velocity_foot_to_pelvis_path = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/velocity/LeftFoot/Foot_to_Pelvis"
+right_velocity_foot_to_pelvis_path = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/velocity/RightFoot/Foot_to_Pelvis"
+
 #print(os.listdir())
 
 #position

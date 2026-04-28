@@ -17,10 +17,16 @@ root_dir = "/mnt/ExpDrive/SparkLabLongRun/Data/Biodesign_Data"
 # left_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\LeftFoot\\Foot_to_Pelvis"
 # right_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\RightFoot\\Foot_to_Pelvis"
 
-left_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\LeftFoot\\Foot_to_Pelvis"
-right_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\RightFoot\\Foot_to_Pelvis"
-left_velocity_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\velocity\\LeftFoot\\Foot_to_Pelvis"
-right_velocity_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\velocity\\RightFoot\\Foot_to_Pelvis"
+# left_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\LeftFoot\\Foot_to_Pelvis"
+# right_position_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\position\\RightFoot\\Foot_to_Pelvis"
+# left_velocity_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\velocity\\LeftFoot\\Foot_to_Pelvis"
+# right_velocity_foot_to_pelvis_path = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\pkl_peam_test\\velocity\\RightFoot\\Foot_to_Pelvis"
+
+left_position_foot_to_pelvis_path = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/position/LeftFoot/Foot_to_Pelvis"
+right_position_foot_to_pelvis_path = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/position/RightFoot/Foot_to_Pelvis"
+left_velocity_foot_to_pelvis_path = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/velocity/LeftFoot/Foot_to_Pelvis"
+right_velocity_foot_to_pelvis_path = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/velocity/RightFoot/Foot_to_Pelvis"
+
 All_path =  [left_position_foot_to_pelvis_path,right_position_foot_to_pelvis_path,left_velocity_foot_to_pelvis_path ,right_velocity_foot_to_pelvis_path]
 #print(os.listdir())
 
@@ -31,6 +37,12 @@ for i in All_path:
     else:
         print(f"Folder already exists: {i}")
 #position
+# folder_name = ['A001_M', 'A007_F', 'A013_M', 'B001_M', 'B007_F', 'B013_F', 'C001_F', 'C007_M', 'C013_F',
+# 'A002_M', 'A008_F', 'A014_M', 'B002_F', 'B008_F', 'B014_M', 'C002_M', 'C008_M', 'C014_F',
+# 'A003_F', 'A009_M', 'A015_F', 'B003_F', 'B009_M', 'B015_M', 'C003_F', 'C009_M', 'C015_F',
+# 'A004_F', 'A010_M', 'A016_M', 'B004_F', 'B010_F', 'B016_M', 'C004_F', 'C010_F', 'C016_M',
+# 'A005_F', 'A011_M', 'A017_F', 'B005_M', 'B011_F', 'B017_M', 'C005_M', 'C011_F', 'C017_M',
+# 'A006_F', 'A012_F', 'A018_M', 'B006_F', 'B012_M', 'B018_M', 'C006_F', 'C012_M', 'C018_M']
 folder_name = ['A001_M', 'A002_M', 'A003_F', 'A004_F','A005_F','A006_F','A007_F','A008_F','A010_M','A011_M']
 for i in tqdm(folder_name):
     file_location = glob(f'{root_dir}/{i}/*_treadmill-005*.xlsx')
@@ -107,6 +119,12 @@ for i in tqdm(folder_name):
 
 #velocty
 
+# folder_name = ['A001_M', 'A007_F', 'A013_M', 'B001_M', 'B007_F', 'B013_F', 'C001_F', 'C007_M', 'C013_F',
+# 'A002_M', 'A008_F', 'A014_M', 'B002_F', 'B008_F', 'B014_M', 'C002_M', 'C008_M', 'C014_F',
+# 'A003_F', 'A009_M', 'A015_F', 'B003_F', 'B009_M', 'B015_M', 'C003_F', 'C009_M', 'C015_F',
+# 'A004_F', 'A010_M', 'A016_M', 'B004_F', 'B010_F', 'B016_M', 'C004_F', 'C010_F', 'C016_M',
+# 'A005_F', 'A011_M', 'A017_F', 'B005_M', 'B011_F', 'B017_M', 'C005_M', 'C011_F', 'C017_M',
+# 'A006_F', 'A012_F', 'A018_M', 'B006_F', 'B012_M', 'B018_M', 'C006_F', 'C012_M', 'C018_M']
 folder_name = ['A001_M', 'A002_M', 'A003_F', 'A004_F','A005_F','A006_F','A007_F','A008_F','A010_M','A011_M']
 for i in tqdm(folder_name):
     file_location = glob(f'{root_dir}/{i}/*_treadmill-005*.xlsx')
