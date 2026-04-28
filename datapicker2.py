@@ -7,7 +7,8 @@ from tqdm import tqdm
 from pathlib import Path
 
 print(os.getcwd())
-root_dir = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\peam_test"
+# root_dir = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\peam_test"
+root_dir = "/mnt/ExpDrive/SparkLabLongRun/Data/Biodesign_Data"
 # left_acc_path = "C:\\\\Users\\\\noppa\\OneDrive\\\\เดสก์ท็อป\\\\SparkLab\\\\Code\\\\SPARK-Lab-IMU\\\\data\\\\pkl_peam_test\\\\acceleration\\\\LeftFoot"
 
 # left_angle_path = "C:\\\\Users\\\\noppa\\OneDrive\\\\เดสก์ท็อป\\\\SparkLab\\\\Code\\\\SPARK-Lab-IMU\\\\data\\\\pkl_peam_test\\\\joint_angle\\\\LeftFoot"
