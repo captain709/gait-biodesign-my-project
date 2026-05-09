@@ -12,6 +12,8 @@ import seaborn as sns
 
 import matplotlib.pyplot as plt
 
+from datetime import datetime
+
 import os
 import sys
 from pathlib import Path
@@ -22,36 +24,82 @@ import time
 import model as model
 import pipeline as pipeline
 import util as util
+from mpl_toolkits import mplot3d
 
 
 # ------------------ PIPELINE ------------------
 
+def generate_gait_folder(root: str) -> dict:
+    """Generate timestamped folder structure for gait analysis."""
+    
+    if not os.path.isdir(root):
+        raise FileNotFoundError(f"Root directory '{root}' does not exist.")
+    
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    
+    main_folder = os.path.join(root, timestamp)
+    img_folder = os.path.join(main_folder, "img")
+    subject_folder = os.path.join(img_folder, "subject")
+    
+    os.makedirs(subject_folder, exist_ok=True)
+    
+    return {
+        'root': main_folder,
+        'img': img_folder,
+        'subject': subject_folder,
+        'timestamp': timestamp
+    }
+
+# ------------------ PIPELINE ------------------
+ROOT = "/mnt/ExpDrive/SparkLabLongRun/PeamProject/results"
 # DATA_DIR = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\position\\LeftFoot\\Foot_to_Pelvis"
-DATA_DIR = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/position/RightFoot/Foot_to_Pelvis"
+DATA_DIR_POS = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/position/RightFoot/Foot_to_Pelvis"
+DATA_DIR_VEL = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/velocity/RightFoot/Foot_to_Pelvis"
 # DATA_DIR = "../data/Training_data/pkl/walking_left/LeftFoot"
-DATA_ROOT = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset"
+DATA_ROOT = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69"
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.set_default_device(DEVICE)
 
+experiment_folders = generate_gait_folder(ROOT)
 
-EndSessionPlusOne = []
-with open(os.path.join(DATA_ROOT, 'sessSameRatEnd_plusone_1.csv')) as csvfile2:
-    readCSV2 = csv.reader(csvfile2, delimiter=',') 
-    EndRatSessionPlusOne = []
-    end_session_dict = {}
-    for i, row2 in enumerate(readCSV2):
-        sessSameRatEnd_plusone = row2[0]
-        EndRatSessionPlusOne.append(int(sessSameRatEnd_plusone))
-        end_session_dict[i] = int(sessSameRatEnd_plusone)
+# DEVICE ="cuda" if torch.cuda.is_available() else "cpu"
+# print(f"Training on {DEVICE} ...")
+# torch.set_default_device(DEVICE)
+
+
+# EndSessionPlusOne = []
+# with open(os.path.join(DATA_ROOT, 'sessSameRatEnd_plusone_1.csv')) as csvfile2:
+#     readCSV2 = csv.reader(csvfile2, delimiter=',') 
+#     EndRatSessionPlusOne = []
+#     end_session_dict = {}
+#     for i, row2 in enumerate(readCSV2):
+#         sessSameRatEnd_plusone = row2[0]
+#         EndRatSessionPlusOne.append(int(sessSameRatEnd_plusone))
+#         end_session_dict[i] = int(sessSameRatEnd_plusone)
 
 
 # Getting Dataset
-dataset = pipeline.GaitPhasingDataset(
+#input-velocity #output-position
+dataset_velocity = pipeline.GaitPhasingDataset(
     data_root=DATA_ROOT,
-    data_dir=DATA_DIR,
-    img_dir=DATA_DIR,
-    end_session_plus_one_path= "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\EndSessionPlusOne.csv",
+    data_dir=DATA_DIR_VEL,
+    img_dir=DATA_DIR_VEL, #velocity #_2
+    # end_session_plus_one_path= "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\EndSessionPlusOne.csv",
+    windowWing=3,
+    regressWing=3,
+    predictionGap=1,
+    rotationMatrixList=None,
+    meanForPhaseExtraction=None,
+    sdForPhaseExtraction=None,
+)
+
+dataset_position = pipeline.GaitPhasingDataset(
+    data_root=DATA_ROOT,
+    data_dir=DATA_DIR_POS,
+    img_dir=DATA_DIR_POS, 
+    # end_session_plus_one_path= "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\EndSessionPlusOne.csv",
+    # end_session_plus_one_path= "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\EndSessionPlusOne.csv",  
     windowWing=3,
     regressWing=3,
     predictionGap=1,
@@ -61,39 +109,72 @@ dataset = pipeline.GaitPhasingDataset(
 )
 
 
+
+# if not os.path.exists('C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\result\\test_new_pipe'):
+#     os.makedirs('C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\result\\test_new_pipe')
+#     os.makedirs('C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\result\\test_new_pipe\\img')
+#     os.makedirs('C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\result\\test_new_pipe\\img\\rat')
+#     print(f"Folder created at")
+# else:
+#     print(f"Folder already exists")
+
 # Training Setting
+
+# gpuID=-1
+# crossValidateNo=-1
+# system="walking_left"
+# exercise="walking"
+# SubjectAmount = dataset_velocity.SubjectAmount
+# startNewTraining = True
+# sessionFile="C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\result\\test_new_pipe\\" + f"{dataset_velocity.trainName}phaseModel.ckpt"
+# imageFolder = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\result\\test_new_pipe\\img\\"
+# imageFolderRat = "C:\\Users\\Admin\\Desktop\\peam_biodis_gait\\result\\test_new_pipe\\img\\rat\\"
 
 gpuID=-1
 crossValidateNo=-1
-system="walking_left"
+system="walking_right"
 exercise="walking"
-SubjectAmount = dataset.SubjectAmount
+SubjectAmount = dataset_velocity.SubjectAmount
 startNewTraining = True
-sessionFile="C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\" + f"{dataset.trainName}phaseModel.ckpt"
-imageFolder = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\img\\"
-imageFolderRat = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\img\\rat\\"
-
-
+# sessionFile="C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\" + f"{dataset.trainName}phaseModel.ckpt"
+# imageFolder = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\img\\"
+# imageFolderRat = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\img\\rat\\"
+sessionFile=ROOT + f"{experiment_folders["timestamp"]}_{dataset_velocity.trainName}phaseModel.ckpt"
+imageFolder = experiment_folders["img"]
+imageFolderRat = experiment_folders["subject"]
 ## dataset 
-nowState = dataset.AllData["XY"][0:2, ...]
-nextState = dataset.AllData["XY2"][0:2, ...]
-sessionSegmentMatrix = dataset.AllData["SessionSegmentMatrix"]
-centerPose = dataset.AllData["centerPose"]
+nowState = dataset_velocity.AllData["XY"][:,...] #put in model
+nextState = dataset_velocity.AllData["XY2"][:,...]
 
 
-srcColorList = dataset.AllData["srcColorList"]
-srcColorList_rat = dataset.srcColorList_subject
-
-nowState_img = dataset.AllData_img["XY"]
-nextState_img = dataset.AllData_img["XY2"]
-sessionSegmentMatrix_img = dataset.AllData_img["SessionSegmentMatrix"]
-centerPose_img = dataset.AllData_img["centerPose"]
-
-srcColorList_img = dataset.AllData_img["srcColorList"]
+# print(nowState)
+# raise Exception
+sessionSegmentMatrix = dataset_velocity.AllData["SessionSegmentMatrix"]
+centerPose = dataset_velocity.AllData["centerPose"][0:3,...]
 
 
-EndNumberPlusOne = dataset.EndNumberPlusOne
-EndSessionPlusOne = dataset.EndSessionPlusOne
+srcColorList = dataset_velocity.AllData["srcColorList"]
+srcColorList_rat = dataset_velocity.srcColorList_subject
+
+nowState_img = dataset_velocity.AllData_img["XY"][0:2,...]
+nextState_img = dataset_velocity.AllData_img["XY2"][0:2,...]
+sessionSegmentMatrix_img = dataset_velocity.AllData_img["SessionSegmentMatrix"]
+centerPose_img = dataset_velocity.AllData_img["centerPose"][0:3,...]
+
+srcColorList_img = dataset_velocity.AllData_img["srcColorList"]
+
+print(centerPose_img.shape)
+print(np.mean(centerPose[0:2],axis = -1))
+print(np.std(centerPose[0:2],axis = -1))
+print(np.max(centerPose[0:2],axis = -1))
+print(np.min(centerPose[0:2],axis = -1))
+# raise Exception
+
+
+EndNumberPlusOne = dataset_velocity.EndNumberPlusOne
+EndSessionPlusOne = dataset_velocity.EndSessionPlusOne
+
+centerPose_position = dataset_position.AllData["centerPose"][0:3,...] #lastest_change
 
 
 # Training Args
@@ -131,9 +212,12 @@ optimizer = optim.Adam(pn.parameters())
 # dict of loss functions and weights
 
 Ap = -2.3*np.pi/180
-Bp =  2*np.pi/180              #4*np.pi/180
-Cp = (-180 + 45)*np.pi/180
+Bp = 4*np.pi/180
+Cp = (-180 + 45)*np.pi/105
 
+# Ap = -2.3*np.pi/180
+# Bp = 4*np.pi/180
+# Cp = (-180 + 45)*np.pi/180
 
 loss_fn_dict = {
     "SpeedPenalty" : {
@@ -217,7 +301,12 @@ for ifigRatF2 in range(0,SubjectAmount):
     figRatF2.append(plt.figure(figsize=(8, 8)))
 
 
-
+## loss logging 
+speed_penalty_log = []
+singularity_penalty_log = []
+distribution_penalty_log = []
+margin_penalty_log = []
+total_loss_log = []
 
 for epoch in range(EPOCH + 1):
 
@@ -258,8 +347,14 @@ for epoch in range(EPOCH + 1):
     distribution_penalty = loss_fn_dict["DistributionPenalty"]["weight"] * loss_fn_dict["DistributionPenalty"]["loss"](phaseXY, sessionSegmentMatrix)
     margin_penalty = loss_fn_dict["MarginPenalty"]["weight"] * loss_fn_dict["MarginPenalty"]["loss"](centerSigma, prePhaseMargin)
 
-
+    
     loss = speed_penalty + singularity_penalty + distribution_penalty + margin_penalty
+
+    speed_penalty_log.append(speed_penalty.item())
+    singularity_penalty_log.append(singularity_penalty.item()) 
+    distribution_penalty_log.append(distribution_penalty.item())
+    margin_penalty_log.append(margin_penalty.item())
+    total_loss_log.append(loss.item())
 
     # back progpagation
 
@@ -293,7 +388,8 @@ for epoch in range(EPOCH + 1):
             prePhaseMargin = prePhaseMargin.detach().cpu().numpy().T
 
             #util.savePrePhaseAndPhasePlot(prePhase_distribution,phaseXY_distribution,imageFolder+str(step)+'.png',fig, srcColorList)
-            util.saveMarginPlot(prePhase_distribution,phaseXY_distribution,prePhaseMargin,imageFolder+"pytorch_"+str(step)+'.png',fig0, srcColorList)
+
+            util.saveMarginPlot(prePhase_distribution,phaseXY_distribution,prePhaseMargin,imageFolder+"pytorch_circle_"+str(step)+'.png',fig0, srcColorList)
 
             util.saveMarginPlot(prePhase_distribution[:,0:EndNumberPlusOne[0]],phaseXY_distribution[:,0:EndNumberPlusOne[0]],prePhaseMargin[:,0:EndNumberPlusOne[0]],imageFolderRat+"pytorch_"+'Rat1_prephase_'+str(step)+'.png',fig[0], srcColorList_rat[0])
 
@@ -320,9 +416,32 @@ for epoch in range(EPOCH + 1):
                     #util.saveRatPhaseRainbowPlot3(centerPose_img[:,RatEndNumberPlusOne[iTrajec-1]:RatEndNumberPlusOne[iTrajec]],phaseRat[iTrajec], imageFolderRat+'Trajec_Rat'+str(iTrajec+1)+'_H1_'+str(step)+'.png', figRatH1[iTrajec])
                     #util.saveRatPhaseRainbowPlot4(centerPose_img[:,RatEndNumberPlusOne[iTrajec-1]:RatEndNumberPlusOne[iTrajec]],phaseRat[iTrajec], imageFolderRat+'Trajec_Rat'+str(iTrajec+1)+'_H2_'+str(step)+'.png', figRatH2[iTrajec])
 
-            util.savePhase3dPlot(centerPose_img,phase, imageFolder+"pytorch_"+'RatAll_F1_'+str(step)+'.png', fig=None)
+            util.savePhasePerCycleSpiral(centerPose_img,phase, imageFolder+"pytorch_"+'RatAll_F1_percycle_'+str(step)+'.png', fig=None)
             # 				util.savePhaseRainbowPlot2(centerPose_img,phase, imageFolder+'RatAll_F2_'+str(step)+'.png', fig=None)
+            util.save1000PhaseSpiral(centerPose_img,phase, imageFolder+"pytorch_"+'RatAll_F1_1000_'+str(step)+'.png', fig=None)
+            util.saveFirstHalfPhaseSpiral(centerPose_img,phase, imageFolder+"pytorch_"+'RatAll_F1_firsthalf_'+str(step)+'.png', fig=None)
+            util.saveLateHalfPhaseSpiral(centerPose_img,phase, imageFolder+"pytorch_"+'RatAll_F1_latehalf_'+str(step)+'.png', fig=None)
+            HSpeaks, TOpeaks = util.evaluateplot(centerPose_img,centerPose_position,phase,imageFolder+'pytorch_'+'RatAll_F1_evaluation_'+str(step)+'.png', fig=None)
+            util.XZPhase(centerPose_img,centerPose_position,phase,imageFolder+'pytorch_'+'position_and_phase_'+str(step)+'.png', HSpeaks, TOpeaks,fig=None)
 
+            
     if epoch%2000==0:
         print("CV:"+str(crossValidateNo))
         print("Time(min):",(time.time()-startTime)/60)
+
+        util.plot_loss_tracking(
+            speed_penalty_log,
+            singularity_penalty_log,
+            distribution_penalty_log,
+            margin_penalty_log,
+            total_loss_log,
+            save_path=imageFolder+"pytorch_loss_tracking_"+str(step)+'.png'
+        )
+
+        util.print_loss_statistics(
+            speed_penalty_log,
+            singularity_penalty_log,
+            distribution_penalty_log,
+            margin_penalty_log,
+            total_loss_log
+        )

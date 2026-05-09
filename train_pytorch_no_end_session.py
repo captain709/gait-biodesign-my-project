@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+from datetime import datetime
+
 
 import numpy as np
 import pandas as pd
@@ -23,27 +25,50 @@ import model as model
 import pipeline as pipeline
 import util as util
 
+def generate_gait_folder(root: str) -> dict:
+    """Generate timestamped folder structure for gait analysis."""
+    
+    if not os.path.isdir(root):
+        raise FileNotFoundError(f"Root directory '{root}' does not exist.")
+    
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    
+    main_folder = os.path.join(root, timestamp)
+    img_folder = os.path.join(main_folder, "img")
+    subject_folder = os.path.join(img_folder, "subject")
+    
+    os.makedirs(subject_folder, exist_ok=True)
+    
+    return {
+        'root': main_folder,
+        'img': img_folder,
+        'subject': subject_folder,
+        'timestamp': timestamp
+    }
 
 # ------------------ PIPELINE ------------------
-
+ROOT = "/mnt/ExpDrive/SparkLabLongRun/PeamProject/results"
 # DATA_DIR = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\position\\LeftFoot\\Foot_to_Pelvis"
 DATA_DIR = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69/position/RightFoot/Foot_to_Pelvis"
 # DATA_DIR = "../data/Training_data/pkl/walking_left/LeftFoot"
-DATA_ROOT = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset"
+DATA_ROOT = "/mnt/ExpDrive/SparkLabLongRun/Data/peam_dataset/28-04-69"
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.set_default_device(DEVICE)
 
+experiment_folders = generate_gait_folder(ROOT)
 
-EndSessionPlusOne = []
-with open(os.path.join(DATA_ROOT, 'sessSameRatEnd_plusone_1.csv')) as csvfile2:
-    readCSV2 = csv.reader(csvfile2, delimiter=',') 
-    EndRatSessionPlusOne = []
-    end_session_dict = {}
-    for i, row2 in enumerate(readCSV2):
-        sessSameRatEnd_plusone = row2[0]
-        EndRatSessionPlusOne.append(int(sessSameRatEnd_plusone))
-        end_session_dict[i] = int(sessSameRatEnd_plusone)
+## generate folder for current experiment session
+# os.system("sh generate_peam_experiment_folder.sh")
+# EndSessionPlusOne = []
+# with open(os.path.join(DATA_ROOT, 'sessSameRatEnd_plusone_1.csv')) as csvfile2:
+#     readCSV2 = csv.reader(csvfile2, delimiter=',') 
+#     EndRatSessionPlusOne = []
+#     end_session_dict = {}
+#     for i, row2 in enumerate(readCSV2):
+#         sessSameRatEnd_plusone = row2[0]
+#         EndRatSessionPlusOne.append(int(sessSameRatEnd_plusone))
+#         end_session_dict[i] = int(sessSameRatEnd_plusone)
 
 
 # Getting Dataset
@@ -51,7 +76,7 @@ dataset = pipeline.GaitPhasingDataset(
     data_root=DATA_ROOT,
     data_dir=DATA_DIR,
     img_dir=DATA_DIR,
-    end_session_plus_one_path= "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\EndSessionPlusOne.csv",
+    # end_session_plus_one_path= "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\EndSessionPlusOne.csv",
     windowWing=3,
     regressWing=3,
     predictionGap=1,
@@ -65,13 +90,16 @@ dataset = pipeline.GaitPhasingDataset(
 
 gpuID=-1
 crossValidateNo=-1
-system="walking_left"
+system="walking_right"
 exercise="walking"
 SubjectAmount = dataset.SubjectAmount
 startNewTraining = True
-sessionFile="C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\" + f"{dataset.trainName}phaseModel.ckpt"
-imageFolder = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\img\\"
-imageFolderRat = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\img\\rat\\"
+# sessionFile="C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\" + f"{dataset.trainName}phaseModel.ckpt"
+# imageFolder = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\img\\"
+# imageFolderRat = "C:\\Users\\noppa\\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\test_new_pipe\\img\\rat\\"
+sessionFile=ROOT + f"{experiment_folders["timestamp"]}_{dataset.trainName}phaseModel.ckpt"
+imageFolder = experiment_folders["img"]
+imageFolderRat = experiment_folders["subject"]
 
 
 ## dataset 

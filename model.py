@@ -127,6 +127,91 @@ class PhaseNetwork(nn.Module):
     
 
 
+class PhaseNetworkWithEventClassifier(nn.Module):
+
+    def __init__(
+        self,
+        h=25,
+        depth=4,
+        D=2,
+        windowWing=3,
+        activation="tanh",
+        event_classes=3,
+        device=DEVICE
+    ):
+        super().__init__()
+
+        windowSize = 1 + windowWing * 2 
+        self.inputSize =  D * 2 * windowSize
+        self.outputSize = 2
+
+        self.hidden_sizes = [self.inputSize] + [h]*depth + [self.outputSize]
+
+        self.h = h
+        self.depth = depth
+        self.D = D
+        self.windowWing = windowWing
+        self.deice = device
+        
+
+        self.activation = F.tanh if activation=="tanh" else F.relu
+
+        self.layers = self._build_layer()
+    
+
+    def _build_layer(self):
+
+        self.fcs = nn.ModuleDict()
+
+        for i in range(len(self.hidden_sizes) - 1):
+
+            nn_input = self.hidden_sizes[i]
+            nn_output = self.hidden_sizes[i + 1]
+
+            linear = nn.Linear(
+                in_features=nn_input,
+                out_features=nn_output,
+            )
+
+            ## Weight initialization
+            nn.init.normal_(linear.weight, mean=0, std=np.sqrt(1./ nn_input)) # Normal initiation for Weights
+            nn.init.zeros_(linear.bias) # Zeros initiation for bias
+
+            self.fcs[f"LinearLayer{i + 1}"] = linear
+            
+            self.classifier = nn.Linear(in_features=self.outputSize, out_features=self.event_classes) ## classifier layer for evene classification
+            
+            nn.init.normal_(self.classifier.weight, mean=0, std=np.sqrt(1./ self.outputSize)) # Normal initiation for Weights
+            nn.init.zeros_(self.classifier.bias) # Zeros initiation for bias
+            
+    def forward(self, x):
+
+        # flatInput = x.reshape(-1, self.inputSize)
+        flatInput = x.reshape(28, -1).T
+
+        A = [flatInput]
+
+        for i, (layer_name, layer) in enumerate(self.fcs.items(), 1):
+            if i == len(self.fcs):
+                # Bypassing activation in the last layer
+                Ai = layer(A[i - 1])
+            
+            else:
+                Ai = self.activation(layer(A[i - 1]))
+
+            A.append(Ai)
+
+        prePhase = A[-1]
+        # print(prePhase.shape)
+        ## calculate phaseXY
+        phaseXY = F.normalize(prePhase, p=2, dim=1) # L2 normalization of the prePhase
+        # print(phaseXY.shape)
+        phaseRad = torch.atan2(phaseXY[:, 1], phaseXY[:, 0]) # Get the phase angle in Radian
+
+        event_probabilities = F.softmax(self.classifier(prePhase), dim=1)
+
+        return prePhase, phaseXY, phaseRad, event_probabilities
+
 # Loss Functions
 
 # Speed Penalty

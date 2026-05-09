@@ -6,6 +6,8 @@ from copy import deepcopy
 import os
 import pandas as pd
 import matplotlib
+import matplotlib.gridspec as gridspec
+from matplotlib.patches import Rectangle
 # %matplotlib notebook
 if os.name != 'nt':
 	matplotlib.use('Agg') 
@@ -20,6 +22,7 @@ import scipy.signal as signal
 import scipy.stats as stats
 from scipy.signal import find_peaks
 from mpl_toolkits import mplot3d
+import seaborn as sns
 
 def detect_peaks(data, threshold=None, distance=5):
     """
@@ -2219,3 +2222,229 @@ def XZPhase(centerPose,centerPose_2, phase, filename, HSpeaks, TOpeaks, fig=None
 
 # 		plt.show()
 
+def detect_gait_events(centerPose):
+    """
+    Detect heel strike and toe-off events from center pose data.
+
+    Parameters
+    ----------
+    centerPose : np.ndarray, shape (3, N)
+        Row 0: x velocity, Row 1: z velocity, Row 2: frame numbers
+    phase : np.ndarray, shape (N,)
+        Phase signal aligned with centerPose columns
+
+    Returns
+    -------
+    events : np.ndarray, shape (N,)
+        0 = no event, 1 = heel strike, 2 = toe-off
+        Aligned to the original full-length input (indices 0..N-1).
+        Events outside the slice [15:801] remain 0.
+    """
+    z_velocity = centerPose[1, :]
+    n_total = centerPose.shape[1]
+
+    # Working slice (mirrors original [15:801] window)
+    # sl = slice(15, 801)
+    # z_vel_slice = z_velocity[sl]
+    z_vel_slice = z_velocity
+
+    # Toe-off: positive z-velocity peaks
+    TO_local, _ = find_peaks(z_velocity, height=0.4, distance=50)
+
+    # Heel strike: negative z-velocity troughs (inverted peaks)
+    HS_local, _ = find_peaks(-z_velocity, height=(None, 0.3), distance=50)
+
+    # Build output array in full-length space
+    events = np.zeros(n_total, dtype=np.int8)
+
+    # Map local slice indices back to full array indices
+    TO_global = TO_local 
+    HS_global = HS_local 
+    print("Detected HS frames:", HS_global)
+    print("Detected TO frames:", TO_global)
+
+
+    events[HS_global] = 1  # heel strike
+    events[TO_global] = 2  # toe-off
+
+    return events
+
+
+# ----- LOSS TRACKING PLOT WITH PROFESSIONAL STYLING ----- #
+
+def plot_loss_tracking(
+    speed_penalty_log,
+    singularity_penalty_log,
+    distribution_penalty_log,
+    margin_penalty_log,
+    total_loss_log,
+    save_path=None,
+    title="Loss Tracking - Gait Analysis Experiment"
+):
+    """
+    Plot loss components and total loss with professional styling.
+    
+    Args:
+        speed_penalty_log (list): Speed penalty values across epochs
+        singularity_penalty_log (list): Singularity penalty values
+        distribution_penalty_log (list): Distribution penalty values
+        margin_penalty_log (list): Margin penalty values
+        total_loss_log (list): Total loss values
+        save_path (str, optional): Path to save figure (e.g., 'loss_plot.png')
+        title (str): Plot title
+        
+    Returns:
+        fig, axes: Matplotlib figure and axes objects
+        
+    Example:
+        fig, axes = plot_loss_tracking(
+            speed_penalty_log,
+            singularity_penalty_log,
+            distribution_penalty_log,
+            margin_penalty_log,
+            total_loss_log,
+            save_path='loss_tracking.png'
+        )
+        plt.show()
+    """
+    
+    epochs = np.arange(len(total_loss_log))
+    
+    # Set style
+    plt.style.use('seaborn-v0_8-darkgrid')
+    sns.set_palette("husl")
+    
+    # Create figure with custom layout
+    fig = plt.figure(figsize=(16, 10))
+    gs = gridspec.GridSpec(3, 2, figure=fig, hspace=0.35, wspace=0.3)
+    
+    # Color scheme
+    colors = {
+        'speed': '#FF6B6B',
+        'singularity': '#4ECDC4',
+        'distribution': '#45B7D1',
+        'margin': '#FFA07A',
+        'total': '#2C3E50'
+    }
+    
+    # ============ 1. All Components + Total Loss (Main Plot) ============
+    ax1 = fig.add_subplot(gs[0, :])
+    
+    ax1.plot(epochs, speed_penalty_log, label='Speed Penalty', 
+             color=colors['speed'], linewidth=2.5, alpha=0.8)
+    ax1.plot(epochs, singularity_penalty_log, label='Singularity Penalty', 
+             color=colors['singularity'], linewidth=2.5, alpha=0.8)
+    ax1.plot(epochs, distribution_penalty_log, label='Distribution Penalty', 
+             color=colors['distribution'], linewidth=2.5, alpha=0.8)
+    ax1.plot(epochs, margin_penalty_log, label='Margin Penalty', 
+             color=colors['margin'], linewidth=2.5, alpha=0.8)
+    ax1.plot(epochs, total_loss_log, label='Total Loss', 
+             color=colors['total'], linewidth=3.5, linestyle='--', 
+             marker='o', markersize=4, alpha=0.9)
+    
+    ax1.set_xlabel('Epoch', fontsize=12, fontweight='bold')
+    ax1.set_ylabel('Loss Value', fontsize=12, fontweight='bold')
+    ax1.set_title('Loss Components vs Total Loss', fontsize=14, fontweight='bold', pad=15)
+    ax1.legend(loc='upper right', fontsize=10, framealpha=0.95)
+    ax1.grid(True, alpha=0.3)
+    
+    # ============ 2. Individual Component Plots (2x2) ============
+    components = [
+        ('speed_penalty_log', speed_penalty_log, colors['speed'], 'Speed Penalty'),
+        ('singularity_penalty_log', singularity_penalty_log, colors['singularity'], 'Singularity Penalty'),
+        ('distribution_penalty_log', distribution_penalty_log, colors['distribution'], 'Distribution Penalty'),
+        ('margin_penalty_log', margin_penalty_log, colors['margin'], 'Margin Penalty'),
+    ]
+    
+    for idx, (name, data, color, label) in enumerate(components):
+        ax = fig.add_subplot(gs[1 + idx // 2, idx % 2])
+        
+        ax.fill_between(epochs, data, alpha=0.3, color=color)
+        ax.plot(epochs, data, color=color, linewidth=2.5, marker='o', markersize=3)
+        
+        ax.set_xlabel('Epoch', fontsize=10, fontweight='bold')
+        ax.set_ylabel('Loss', fontsize=10, fontweight='bold')
+        ax.set_title(label, fontsize=11, fontweight='bold')
+        ax.grid(True, alpha=0.2)
+        
+        # Add min/max annotations
+        min_idx = np.argmin(data)
+        max_idx = np.argmax(data)
+        ax.scatter([min_idx], [data[min_idx]], color='green', s=100, zorder=5, marker='v', label='Min')
+        ax.scatter([max_idx], [data[max_idx]], color='red', s=100, zorder=5, marker='^', label='Max')
+        ax.legend(fontsize=8)
+    
+    fig.suptitle(title, fontsize=16, fontweight='bold', y=0.995)
+    
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        print(f"✓ Plot saved to: {save_path}")
+    
+    return fig, ax1
+ 
+ 
+def plot_loss_comparison(loss_logs_dict, save_path=None):
+    """
+    Plot multiple loss logs for comparison (e.g., different model runs).
+    
+    Args:
+        loss_logs_dict (dict): Dictionary with keys as labels and values as loss lists
+        save_path (str, optional): Path to save figure
+        
+    Example:
+        loss_logs = {
+            'Run 1': total_loss_log_1,
+            'Run 2': total_loss_log_2,
+            'Run 3': total_loss_log_3,
+        }
+        plot_loss_comparison(loss_logs)
+    """
+    
+    fig, ax = plt.subplots(figsize=(12, 6))
+    
+    for label, loss_log in loss_logs_dict.items():
+        epochs = np.arange(len(loss_log))
+        ax.plot(epochs, loss_log, label=label, linewidth=2.5, marker='o', markersize=4, alpha=0.8)
+    
+    ax.set_xlabel('Epoch', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Total Loss', fontsize=12, fontweight='bold')
+    ax.set_title('Loss Comparison Across Runs', fontsize=14, fontweight='bold')
+    ax.legend(fontsize=11, loc='upper right')
+    ax.grid(True, alpha=0.3)
+    
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        print(f"✓ Comparison plot saved to: {save_path}")
+    
+    return fig, ax
+ 
+ 
+def print_loss_statistics(speed_penalty_log, singularity_penalty_log, 
+                          distribution_penalty_log, margin_penalty_log, 
+                          total_loss_log):
+    """Print statistics for loss components."""
+    
+    logs = {
+        'Speed Penalty': speed_penalty_log,
+        'Singularity Penalty': singularity_penalty_log,
+        'Distribution Penalty': distribution_penalty_log,
+        'Margin Penalty': margin_penalty_log,
+        'Total Loss': total_loss_log
+    }
+    
+    print("\n" + "="*70)
+    print("LOSS STATISTICS")
+    print("="*70)
+    
+    for name, log in logs.items():
+        print(f"\n{name}:")
+        print(f"  Initial:  {log[0]:.6f}")
+        print(f"  Final:    {log[-1]:.6f}")
+        print(f"  Min:      {min(log):.6f} (epoch {np.argmin(log)})")
+        print(f"  Max:      {max(log):.6f} (epoch {np.argmax(log)})")
+        print(f"  Mean:     {np.mean(log):.6f}")
+        print(f"  Std:      {np.std(log):.6f}")
+        
+        # Improvement percentage
+        improvement = ((log[0] - log[-1]) / log[0] * 100) if log[0] != 0 else 0
+        print(f"  Improvement: {improvement:.2f}%")
