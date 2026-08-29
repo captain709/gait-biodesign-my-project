@@ -10,17 +10,28 @@ import matplotlib.pyplot as plt
 from scipy.signal import hilbert
 import matplotlib
 
-root_dir = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\Training_data\\peam_test"
-left_acc_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\acceleration_graph\\LeftFoot"
-left_angle_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\joint_angle_graph\\LeftFoot"
-left_velocity_foot_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftFoot"
-left_velocity_upper_leg_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftUpperLeg"
-left_velocity_lower_leg_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftLowerLeg"
-left_velocity_toe_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftToe"
-left_velocity_shoulder_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftShoulder"
-left_velocity_forearm_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftForearm"
-left_velocity_upper_arm_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftUpperArm"
-left_velocity_hand_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftHand"
+# root_dir = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\Training_data\\peam_test"
+root_dir = "../peam_test"
+# left_acc_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\acceleration_graph\\LeftFoot"
+left_acc_path = "../pkl_peam_test/acceleration_graph/LeftFoot"
+# left_angle_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\joint_angle_graph\\LeftFoot"
+left_angle_path = "../pkl_peam_test/joint_angle_graph/LeftFoot"
+# left_velocity_foot_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftFoot"
+left_velocity_foot_path = "../pkl_peam_test/velocity_graph/LeftFoot"
+# left_velocity_upper_leg_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftUpperLeg"
+left_velocity_upper_leg_path = "../pkl_peam_test/velocity_graph/LeftUpperLeg"
+# left_velocity_lower_leg_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftLowerLeg"
+left_velocity_lower_leg_path = "../pkl_peam_test/velocity_graph/LeftLowerLeg"
+# left_velocity_toe_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftToe"
+left_velocity_toe_path = "../pkl_peam_test/velocity_graph/LeftToe"
+# left_velocity_shoulder_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftShoulder"
+left_velocity_shoulder_path = "../pkl_peam_test/velocity_graph/LeftShoulder"
+# left_velocity_forearm_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftForearm"
+left_velocity_forearm_path = "../pkl_peam_test/velocity_graph/LeftForearm"
+# left_velocity_upper_arm_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftUpperArm"
+left_velocity_upper_arm_path = "../pkl_peam_test/velocity_graph/LeftUpperArm"
+# left_velocity_hand_path = "C:\\Users\\noppa\OneDrive\\เดสก์ท็อป\\SparkLab\\Code\\SPARK-Lab-IMU\\data\\pkl_peam_test\\velocity_graph\\LeftHand"
+left_velocity_hand_path = "../pkl_peam_test/velocity_graph/LeftHand"
 
 def hilbert_transform_with_phase_color(data_x):
 
@@ -77,9 +88,9 @@ for i in folder_name:
         plt.xlabel('Frame (X-axis)')
         plt.ylabel('LeftFootx_acc (Y-axis)')
         plt.title('leftFootx_acc')
-        plt.savefig(op.join(left_acc_path, f"AccelerationLeftFoot_X_defult_{i}_{j}.png"))
+        plt.savefig(op.join(left_acc_path, f'AccelerationLeftFoot_X_defult_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_acc_path, f"AccelerationLeftFoot_X_defult_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_acc_path, f'AccelerationLeftFoot_X_defult_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -88,9 +99,9 @@ for i in folder_name:
         plt.xlabel('Frame (X-axis)')
         plt.ylabel('LeftFootToPelvisx_acc (Y-axis)')
         plt.title('leftFootToPelvisx_acc')
-        plt.savefig(op.join(left_acc_path, f"AccelerationLeftFoot_X_{i}_{j}.png"))
+        plt.savefig(op.join(left_acc_path, f'AccelerationLeftFoot_X_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_acc_path, f"AccelerationLeftFoot_X_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_acc_path, f'AccelerationLeftFoot_X_{i}_{j}.png')}")
 
         plt.clf()
 '''
@@ -107,9 +118,9 @@ for i in folder_name:
         plt.xlabel('Frame (X-axis)')
         plt.ylabel('LeftFootToPelvisx_acc (Y-axis) Hilbert transform')
         cb=plt.colorbar(format=matplotlib.ticker.FormatStrFormatter('%g $\pi$'))
-        plt.savefig(op.join(left_acc_path, f"AccelerationLeftFoot_Hilbert_transform_X_{i}_{j}.png"))
+        plt.savefig(op.join(left_acc_path, f'AccelerationLeftFoot_Hilbert_transform_X_{i}_{j}.png"))
         
-        print(f"Plot saved at: {op.join(left_acc_path, f"AccelerationLeftFoot_Hilbert_transform_X_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_acc_path, f'AccelerationLeftFoot_Hilbert_transform_X_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -124,9 +135,9 @@ for i in folder_name:
         plt.xlabel('Frame (X-axis)')
         plt.ylabel('LeftFootToPelvisz_acc (Y-axis)')
         plt.title('leftFootToPelvisz_acc')
-        plt.savefig(op.join(left_acc_path, f"AccelerationLeftFoot_Z_{i}_{j}.png"))
+        plt.savefig(op.join(left_acc_path, f'AccelerationLeftFoot_Z_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_acc_path, f"AccelerationLeftFoot_Z_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_acc_path, f'AccelerationLeftFoot_Z_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -142,9 +153,9 @@ for i in folder_name:
         plt.xlabel('Frame (X-axis)')
         plt.ylabel('LeftFootToPelvisz_acc (Y-axis) Hilbert transform')
         cb=plt.colorbar(format=matplotlib.ticker.FormatStrFormatter('%g $\pi$'))
-        plt.savefig(op.join(left_acc_path, f"AccelerationLeftFoot_Hilbert_transform_Z_{i}_{j}.png"))
+        plt.savefig(op.join(left_acc_path, f'AccelerationLeftFoot_Hilbert_transform_Z_{i}_{j}.png"))
         
-        print(f"Plot saved at: {op.join(left_acc_path, f"AccelerationLeftFoot_Hilbert_transform_Z_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_acc_path, f'AccelerationLeftFoot_Hilbert_transform_Z_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -159,7 +170,7 @@ for i in folder_name:
         plt.title('LeftFoot angle Flex/Extend')
         plt.savefig(op.join(left_angle_path, f"LeftFoot_angle_Flex_Extend_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_angle_path, f"LeftFoot_angle_Flex_Extend_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_angle_path, f"LeftFoot_angle_Flex_Extend_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -177,7 +188,7 @@ for i in folder_name:
         # cb=plt.colorbar(format=matplotlib.ticker.FormatStrFormatter('%g $\pi$'))
         # plt.savefig(op.join(left_angle_path, f"LeftFoot angle Flex_Extend_{i}_{j}.png"))
         
-        # print(f"Plot saved at: {op.join(left_angle_path, f"LeftFoot angle Flex_Extend_{i}_{j}.png")}")
+        # print(f"Plot saved at: {op.join(left_angle_path, f"LeftFoot angle Flex_Extend_{i}_{j}.png')}")
 
         # plt.clf()
 
@@ -196,7 +207,7 @@ for i in folder_name:
         plt.title('leftFootToPelvisx_vel')
         plt.savefig(op.join(left_velocity_foot_path, f"LeftFoot_velocity_X_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"LeftFoot_velocity_X_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"LeftFoot_velocity_X_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -214,7 +225,7 @@ for i in folder_name:
         cb=plt.colorbar(format=matplotlib.ticker.FormatStrFormatter('%g $\pi$'))
         plt.savefig(op.join(left_velocity_foot_path, f"VelocityLeftFoot_Hilbert_transform_X_{i}_{j}.png"))
         
-        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"VelocityLeftFoot_Hilbert_transform_X_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"VelocityLeftFoot_Hilbert_transform_X_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -231,7 +242,7 @@ for i in folder_name:
         plt.title('leftFootToPelvisy_vel')
         plt.savefig(op.join(left_velocity_foot_path, f"LeftFoot_velocity_Y_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"LeftFoot_velocity_Y_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"LeftFoot_velocity_Y_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -249,7 +260,7 @@ for i in folder_name:
         cb=plt.colorbar(format=matplotlib.ticker.FormatStrFormatter('%g $\pi$'))
         plt.savefig(op.join(left_velocity_foot_path, f"VelocityLeftFoot_Hilbert_transform_Y_{i}_{j}.png"))
         
-        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"VelocityLeftFoot_Hilbert_transform_Y_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"VelocityLeftFoot_Hilbert_transform_Y_{i}_{j}.png')}")
 
         plt.clf()        
 
@@ -267,7 +278,7 @@ for i in folder_name:
         plt.title('leftFootToPelvisz_vel')
         plt.savefig(op.join(left_velocity_foot_path, f"LeftFoot_velocity_Z_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"LeftFoot_velocity_Z_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"LeftFoot_velocity_Z_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -285,7 +296,7 @@ for i in folder_name:
         cb=plt.colorbar(format=matplotlib.ticker.FormatStrFormatter('%g $\pi$'))
         plt.savefig(op.join(left_velocity_foot_path, f"VelocityLeftFoot_Hilbert_transform_Z_{i}_{j}.png"))
         
-        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"VelocityLeftFoot_Hilbert_transform_Z_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_foot_path, f"VelocityLeftFoot_Hilbert_transform_Z_{i}_{j}.png')}")
 
         plt.clf()        
 
@@ -304,7 +315,7 @@ for i in folder_name:
         plt.title('leftUpperLegToPelvisx_vel')
         plt.savefig(op.join(left_velocity_upper_leg_path, f"LeftUpperLeg_velocity_X_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"LeftUpperLeg_velocity_X_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"LeftUpperLeg_velocity_X_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -322,7 +333,7 @@ for i in folder_name:
         cb=plt.colorbar(format=matplotlib.ticker.FormatStrFormatter('%g $\pi$'))
         plt.savefig(op.join(left_velocity_upper_leg_path, f"VelocityLeftUpperLeg_Hilbert_transform_X_{i}_{j}.png"))
         
-        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"VelocityLeftUpperLeg_Hilbert_transform_X_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"VelocityLeftUpperLeg_Hilbert_transform_X_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -339,7 +350,7 @@ for i in folder_name:
         plt.title('leftUpperLegToPelvisy_vel')
         plt.savefig(op.join(left_velocity_upper_leg_path, f"LeftUpperLeg_velocity_Y_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"LeftUpperLeg_velocity_Y_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"LeftUpperLeg_velocity_Y_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -357,7 +368,7 @@ for i in folder_name:
         cb=plt.colorbar(format=matplotlib.ticker.FormatStrFormatter('%g $\pi$'))
         plt.savefig(op.join(left_velocity_upper_leg_path, f"VelocityLeftUpperLeg_Hilbert_transform_Y_{i}_{j}.png"))
         
-        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"VelocityLeftUpperLeg_Hilbert_transform_Y_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"VelocityLeftUpperLeg_Hilbert_transform_Y_{i}_{j}.png')}")
 
         plt.clf()        
 
@@ -375,7 +386,7 @@ for i in folder_name:
         plt.title('leftUpperLegToPelvisz_vel')
         plt.savefig(op.join(left_velocity_upper_leg_path, f"LeftUpperLeg_velocity_Z_{i}_{j}.png"))
     
-        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"LeftUpperLeg_velocity_Z_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"LeftUpperLeg_velocity_Z_{i}_{j}.png')}")
 
         plt.clf()
 
@@ -393,7 +404,7 @@ for i in folder_name:
         cb=plt.colorbar(format=matplotlib.ticker.FormatStrFormatter('%g $\pi$'))
         plt.savefig(op.join(left_velocity_upper_leg_path, f"VelocityLeftUpperLeg_Hilbert_transform_Z_{i}_{j}.png"))
         
-        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"VelocityLeftUpperLeg_Hilbert_transform_Z_{i}_{j}.png")}")
+        print(f"Plot saved at: {op.join(left_velocity_upper_leg_path, f"VelocityLeftUpperLeg_Hilbert_transform_Z_{i}_{j}.png')}")
 
         plt.clf()        
 
